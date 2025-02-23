@@ -40,7 +40,7 @@ async def delete_note(
         raise HTTPException(status_code=404, detail=str(e))
 
 
-@router.get("/{note_id}")
+@router.get("/{note_id}", response_model=NoteReadSchema)
 async def get_note(
         note_id: int,
         session: Annotated[AsyncSession, Depends(db_helper.session_getter)]
