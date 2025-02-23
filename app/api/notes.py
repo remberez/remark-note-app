@@ -41,7 +41,7 @@ async def delete_note(
 
 
 @router.get("/{note_id}")
-async def read_note(
+async def get_note(
         note_id: int,
         session: Annotated[AsyncSession, Depends(db_helper.session_getter)]
 ):
