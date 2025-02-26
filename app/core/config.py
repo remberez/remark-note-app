@@ -21,6 +21,10 @@ class DataBaseConfig(BaseModel):
     max_overflow: int = 10
 
 
+class AccessTokenConfig(BaseModel):
+    lifetime_seconds: int = 3600
+
+
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         case_sensitive=False,
