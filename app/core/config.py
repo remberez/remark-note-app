@@ -36,6 +36,7 @@ class Settings(BaseSettings):
     run: RunConfig = RunConfig()
     api: APIPrefix = APIPrefix()
     db: DataBaseConfig
+    auth: AccessTokenConfig = AccessTokenConfig()
 
 
 settings = Settings()
