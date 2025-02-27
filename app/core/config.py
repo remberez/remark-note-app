@@ -13,6 +13,12 @@ class APIPrefix(BaseModel):
     notes: str = "/notes"
     auth: str = "/auth"
 
+    @property
+    def token_url(self):
+        parts = (self.prefix, self.auth, "/login")
+        path = "".join(parts)
+        return path.removeprefix("/")
+
 
 class DataBaseConfig(BaseModel):
     url: PostgresDsn
