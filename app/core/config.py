@@ -12,6 +12,7 @@ class APIPrefix(BaseModel):
     prefix: str = "/api"
     notes: str = "/notes"
     auth: str = "/auth"
+    users: str = "/users"
 
     @property
     def token_url(self):
