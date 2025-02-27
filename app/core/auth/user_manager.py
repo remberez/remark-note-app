@@ -1,18 +1,19 @@
 from typing import Optional
 
-from fastapi_users import BaseUserManager, models
+from fastapi_users import BaseUserManager, models, IntegerIDMixin
 from starlette.requests import Request
 
 from core.config import settings
 from core.models import UserORM
-from core.models.base import IntegerIDMixin
 
 import logging
+
+from core.types.user_id import UserIDType
 
 log = logging.getLogger(__name__)
 
 
-class UserManager(IntegerIDMixin, BaseUserManager[UserORM, IntegerIDMixin]):
+class UserManager(IntegerIDMixin, BaseUserManager[UserORM, UserIDType]):
     reset_password_token_secret = settings.auth.reset_password_token_secret
     verification_token_secret = settings.auth.verification_token_secret
 
