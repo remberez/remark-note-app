@@ -2,6 +2,7 @@ from fastapi.params import Depends
 from fastapi_users.authentication.strategy import AccessTokenDatabase, DatabaseStrategy
 from typing_extensions import Annotated
 
+from .access_token import get_access_token_db
 from core.config import settings
 from core.models import AccessTokenORM
 
@@ -13,6 +14,6 @@ def get_database_strategy(
         ]
 ) -> DatabaseStrategy:
     return DatabaseStrategy(
-        access_token_db,
+        database=access_token_db,
         lifetime_seconds=settings.auth.lifetime_seconds
     )

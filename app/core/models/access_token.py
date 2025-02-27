@@ -1,4 +1,6 @@
-from fastapi_users_db_sqlalchemy.access_token import SQLAlchemyBaseAccessTokenTable, SQLAlchemyAccessTokenDatabase
+from fastapi_users_db_sqlalchemy.access_token import (
+    SQLAlchemyBaseAccessTokenTable, SQLAlchemyAccessTokenDatabase
+)
 from sqlalchemy import (
     Integer, ForeignKey
 )
