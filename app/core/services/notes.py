@@ -32,20 +32,6 @@ class NoteService:
         return note
 
     @staticmethod
-    async def delete_note(
-            *,
-            note_id: int,
-            session: AsyncSession,
-    ) -> None:
-        stmt = select(NoteORM).filter_by(id=note_id)
-        note = (await session.scalars(stmt)).first()
-
-        if not note:
-            raise NotFoundError("Not found")
-        await session.delete(note)
-        await session.commit()
-
-    @staticmethod
     async def get_note(
             *,
             note_id,
