@@ -20,6 +20,7 @@ router = APIRouter(
 @router.get(
     "/my",
     response_model=list[NoteShortSchema],
+    summary="Get all user notes."
 )
 async def get_user_notes(
         session: Annotated[
@@ -31,9 +32,12 @@ async def get_user_notes(
             Depends(current_active_verify_user)
         ],
 ):
+    """
+    Returns a list of all the user's notes by user ID.
+    """
     return await NoteService.get_user_notes(
         session=session,
-        user_id=user.id
+        user_id=user.id,
     )
 
 
