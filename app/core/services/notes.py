@@ -49,13 +49,18 @@ class NoteService:
     async def get_note(
             *,
             note_id,
+            user_id,
             session: AsyncSession,
     ) -> NoteORM:
-        stmt = select(NoteORM).filter_by(id=note_id)
-        note = (await session.scalars(stmt)).first()
+        stmt = select(NoteORM).options(joinedload(NoteORM.user)).filter_by(id=note_id)
+        note: NoteORM = (await session.scalars(stmt)).first()
 
         if not note:
-            raise NotFoundError("Not found")
+            raise NotFoundError("Not found.")
+
+        if note.user.id != user_id:
+            raise PermissionDeniedError("You do not have permission to delete this note.")
+
         return note
 
     @staticmethod
