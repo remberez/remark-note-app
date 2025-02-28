@@ -8,6 +8,7 @@ from core.models import db_helper
 from core.schemas.notes import NoteReadSchema, NoteAddSchema, NoteShortSchema
 from core.schemas.users import UserReadSchema
 from core.services.notes import NoteService
+from core.types.exceptions import NotFoundError
 
 from .dependencies.auth.current_user import current_active_verify_user
 
@@ -53,11 +54,12 @@ async def add_note(
 @router.delete("/{note_id}")
 async def delete_note(
         note_id: int,
-        session: Annotated[AsyncSession, Depends(db_helper.session_getter)]
+        user: Annotated[UserReadSchema, Depends(current_active_verify_user)],
+        session: Annotated[AsyncSession, Depends(db_helper.session_getter)],
 ):
     try:
         await NoteService.delete_note(note_id=note_id, session=session)
-    except ValueError as e:
+    except NotFoundError as e:
         raise HTTPException(status_code=404, detail=str(e))
 
 
@@ -68,7 +70,7 @@ async def get_note(
 ):
     try:
         return await NoteService.get_note(note_id=note_id, session=session)
-    except ValueError as e:
+    except NotFoundError as e:
         raise HTTPException(status_code=404, detail=str(e))
 
 
@@ -80,5 +82,5 @@ async def change_note(
 ):
     try:
         return await NoteService.change_note(note_id=note_id, note_schema=note, session=session)
-    except ValueError as e:
+    except NotFoundError as e:
         raise HTTPException(status_code=404, detail=str(e))

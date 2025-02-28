@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.models.notes import NoteORM
 from core.schemas.notes import NoteAddSchema
+from core.types.exceptions import NotFoundError
 
 
 class NoteService:
@@ -39,7 +40,7 @@ class NoteService:
         note = (await session.scalars(stmt)).first()
 
         if not note:
-            raise ValueError("Not found")
+            raise NotFoundError("Not found")
         await session.delete(note)
         await session.commit()
 
@@ -53,7 +54,7 @@ class NoteService:
         note = (await session.scalars(stmt)).first()
 
         if not note:
-            raise ValueError("Not found")
+            raise NotFoundError("Not found")
         return note
 
     @staticmethod
@@ -66,7 +67,7 @@ class NoteService:
         note = (await session.scalars(stmt)).first()
 
         if not note:
-            raise ValueError("Not found")
+            raise NotFoundError("Not found")
         for key, value in note_schema.model_dump().items():
             setattr(note, key, value)
         await session.commit()
