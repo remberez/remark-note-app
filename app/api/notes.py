@@ -8,7 +8,10 @@ from core.models import db_helper
 from core.schemas.notes import NoteReadSchema, NoteAddSchema, NoteShortSchema
 from core.schemas.users import UserReadSchema
 from core.services.notes import NoteService
-from core.types.exceptions import NotFoundError
+from core.types.exceptions import (
+    NotFoundError,
+    PermissionDeniedError,
+)
 
 from .dependencies.auth.current_user import current_active_verify_user
 
@@ -51,16 +54,18 @@ async def add_note(
     return await NoteService.add_note(note=note, session=session, user_id=user.id)
 
 
-@router.delete("/{note_id}")
+@router.delete("/{note_id}", status_code=204)
 async def delete_note(
         note_id: int,
         user: Annotated[UserReadSchema, Depends(current_active_verify_user)],
         session: Annotated[AsyncSession, Depends(db_helper.session_getter)],
 ):
     try:
-        await NoteService.delete_note(note_id=note_id, session=session)
+        await NoteService.delete_user_note(note_id=note_id, session=session, user_id=user.id)
     except NotFoundError as e:
         raise HTTPException(status_code=404, detail=str(e))
+    except PermissionDeniedError as e:
+        raise HTTPException(status_code=403, detail=str(e))
 
 
 @router.get("/{note_id}", response_model=NoteReadSchema)

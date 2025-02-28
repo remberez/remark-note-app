@@ -2,10 +2,11 @@ from typing import Any
 
 from sqlalchemy import Sequence, select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import joinedload
 
 from core.models.notes import NoteORM
 from core.schemas.notes import NoteAddSchema
-from core.types.exceptions import NotFoundError
+from core.types.exceptions import NotFoundError, PermissionDeniedError
 
 
 class NoteService:
@@ -81,3 +82,22 @@ class NoteService:
         stmt = select(NoteORM).filter_by(user_id=user_id)
         notes = await session.scalars(stmt)
         return notes.all()
+
+    @staticmethod
+    async def delete_user_note(
+            *,
+            session: AsyncSession,
+            user_id: int,
+            note_id: int,
+    ) -> None:
+        stmt = select(NoteORM).options(joinedload(NoteORM.user)).filter_by(id=note_id)
+        note: NoteORM = (await session.scalars(stmt)).first()
+
+        if not note:
+            raise NotFoundError("Not found.")
+
+        if note.user.id != user_id:
+            raise PermissionDeniedError("You do not have permission to delete this note.")
+
+        await session.delete(note)
+        await session.commit()
