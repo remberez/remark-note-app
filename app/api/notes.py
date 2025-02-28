@@ -5,7 +5,7 @@ from typing_extensions import Annotated
 
 from core.config import settings
 from core.models import db_helper
-from core.schemas.notes import NoteReadSchema, NoteAddSchema, NoteShortSchema
+from core.schemas.notes import NoteReadSchema, NoteAddSchema, NoteShortSchema, NoteUpdateSchema
 from core.schemas.users import UserReadSchema
 from core.services.notes import NoteService
 from core.types.exceptions import (
@@ -85,10 +85,18 @@ async def get_note(
 @router.patch("/{note_id}", response_model=NoteReadSchema)
 async def change_note(
         note_id: int,
-        note: NoteAddSchema,
+        note: NoteUpdateSchema,
+        user: Annotated[UserReadSchema, Depends(current_active_verify_user)],
         session: Annotated[AsyncSession, Depends(db_helper.session_getter)]
 ):
     try:
-        return await NoteService.change_note(note_id=note_id, note_schema=note, session=session)
+        return await NoteService.change_note(
+            note_id=note_id,
+            note_schema=note,
+            user_id=user.id,
+            session=session,
+        )
     except NotFoundError as e:
         raise HTTPException(status_code=404, detail=str(e))
+    except PermissionDeniedError as e:
+        raise HTTPException(status_code=403, detail=str(e))

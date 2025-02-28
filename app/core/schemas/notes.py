@@ -30,3 +30,8 @@ class NoteShortSchema(BaseModel):
 
     id: int
     title: Annotated[str, Field(max_length=25)]
+
+
+class NoteUpdateSchema(BaseModel):
+    title: Annotated[str | None, Field(max_length=25)] = None
+    text: str | None = None
