@@ -21,9 +21,10 @@ class NoteService:
     async def add_note(
             *,
             note: NoteAddSchema,
+            user_id: int,
             session: AsyncSession,
     ) -> NoteORM:
-        note = NoteORM(**note.model_dump())
+        note = NoteORM(**note.model_dump(), user_id=user_id)
         session.add(note)
         await session.commit()
         return note

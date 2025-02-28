@@ -6,7 +6,10 @@ from typing_extensions import Annotated
 from core.config import settings
 from core.models import db_helper
 from core.schemas.notes import NoteReadSchema, NoteAddSchema, NoteShortSchema
+from core.schemas.users import UserReadSchema
 from core.services.notes import NoteService
+
+from .dependencies.auth.current_user import current_active_verify_user
 
 router = APIRouter(
     prefix=settings.api.notes,
@@ -25,8 +28,9 @@ async def get_notes(
 async def add_note(
         note: NoteAddSchema,
         session: Annotated[AsyncSession, Depends(db_helper.session_getter)],
+        user: Annotated[UserReadSchema, Depends(current_active_verify_user)],
 ):
-    return await NoteService.add_note(note=note, session=session)
+    return await NoteService.add_note(note=note, session=session, user_id=user.id)
 
 
 @router.delete("/{note_id}")
