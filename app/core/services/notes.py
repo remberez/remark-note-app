@@ -11,15 +11,6 @@ from core.types.exceptions import NotFoundError, PermissionDeniedError
 
 class NoteService:
     @staticmethod
-    async def get_notes(
-            *,
-            session: AsyncSession,
-    ) -> Sequence[dict[str, Any]]:
-        stmt = select(NoteORM.id, NoteORM.title).order_by(NoteORM.id)
-        result = await session.execute(stmt)
-        return [{"id": row.id, "title": row.title} for row in result]
-
-    @staticmethod
     async def add_note(
             *,
             note: NoteAddSchema,
