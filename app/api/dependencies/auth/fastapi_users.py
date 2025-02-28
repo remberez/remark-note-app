@@ -6,6 +6,6 @@ from core.models import UserORM
 from core.types.user_id import UserIDType
 
 fastapi_users = FastAPIUsers[UserORM, UserIDType](
-    get_user_manager,
-    [auth_backend]
+    get_user_manager=get_user_manager,
+    auth_backends=[auth_backend],
 )

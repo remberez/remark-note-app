@@ -5,7 +5,7 @@ from fastapi_users.db import (
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from .base import Base, IntegerIDMixin
-from ..types.user_id import UserIDType
+from core.types.user_id import UserIDType
 
 
 class UserORM(Base, IntegerIDMixin, SQLAlchemyBaseUserTable[UserIDType]):
