@@ -17,11 +17,24 @@ router = APIRouter(
 )
 
 
-@router.get("", response_model=list[NoteShortSchema])
-async def get_notes(
-        session: Annotated[AsyncSession, Depends(db_helper.session_getter)]
+@router.get(
+    "/my",
+    response_model=list[NoteShortSchema],
+)
+async def get_user_notes(
+        session: Annotated[
+            AsyncSession,
+            Depends(db_helper.session_getter)
+        ],
+        user: Annotated[
+            UserReadSchema,
+            Depends(current_active_verify_user)
+        ],
 ):
-    return await NoteService.get_notes(session=session)
+    return await NoteService.get_user_notes(
+        session=session,
+        user_id=user.id
+    )
 
 
 @router.post("", response_model=NoteReadSchema)

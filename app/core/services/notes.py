@@ -71,3 +71,12 @@ class NoteService:
             setattr(note, key, value)
         await session.commit()
         return note
+
+    @staticmethod
+    async def get_user_notes(
+            session: AsyncSession,
+            user_id: int,
+    ) -> Sequence[NoteORM]:
+        stmt = select(NoteORM).filter_by(user_id=user_id)
+        notes = await session.scalars(stmt)
+        return notes.all()
