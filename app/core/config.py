@@ -35,6 +35,13 @@ class AccessTokenConfig(BaseModel):
     verification_token_secret: str
 
 
+class CORSConfig(BaseModel):
+    allow_origins: list[str] = ["http://localhost:5173"]
+    allow_credentials: bool = True
+    allow_methods: list[str] = ["*"]
+    allow_headers: list[str] = ["*"]
+
+
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         case_sensitive=False,
@@ -45,6 +52,7 @@ class Settings(BaseSettings):
 
     run: RunConfig = RunConfig()
     api: APIPrefix = APIPrefix()
+    cors: CORSConfig = CORSConfig()
     db: DataBaseConfig
     auth: AccessTokenConfig
 
