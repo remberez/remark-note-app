@@ -43,6 +43,13 @@ class NoteFiltersSchema(BaseModel):
         extra="forbid",
     )
 
-    order_by: Literal["created_at", "updated_at", "id"] = Field(
+    order_by: Literal[
+        "created_at",
+        "updated_at",
+        "id",
+        "-created_at",
+        "-updated_at",
+        "-id",
+    ] = Field(
         "id", description="Field defines the field to be sorted."
     )
