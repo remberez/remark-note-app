@@ -1,11 +1,11 @@
 from fastapi import APIRouter, HTTPException
-from fastapi.params import Depends
+from fastapi.params import Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing_extensions import Annotated
 
 from core.config import settings
 from core.models import db_helper
-from core.schemas.notes import NoteReadSchema, NoteAddSchema, NoteShortSchema, NoteUpdateSchema
+from core.schemas.notes import NoteReadSchema, NoteAddSchema, NoteShortSchema, NoteUpdateSchema, NoteFiltersSchema
 from core.schemas.users import UserReadSchema
 from core.services.notes import NoteService
 from core.types.exceptions import (
@@ -35,13 +35,25 @@ async def get_user_notes(
             UserReadSchema,
             Depends(current_active_verify_user)
         ],
+        filers: Annotated[
+            NoteFiltersSchema,
+            Query(),
+        ]
 ):
     """
     Returns a list of all the user's notes by user ID.
     """
+    desc = False
+    if filers.order_by[0] == "-":
+        desc = True
+
+    order_by = filers.order_by.removeprefix("-")
+
     return await NoteService.get_user_notes(
         session=session,
         user_id=user.id,
+        order_by=order_by,
+        is_desc=desc,
     )
 
 

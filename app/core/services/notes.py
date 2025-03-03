@@ -1,6 +1,6 @@
-from typing import Any
+from typing import Literal
 
-from sqlalchemy import Sequence, select, delete
+from sqlalchemy import Sequence, select, desc
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
 
@@ -62,8 +62,16 @@ class NoteService:
     async def get_user_notes(
             session: AsyncSession,
             user_id: int,
+            order_by: str = None,
+            is_desc: bool = False,
     ) -> Sequence[NoteORM]:
         stmt = select(NoteORM).filter_by(user_id=user_id)
+
+        if is_desc and order_by:
+            stmt = stmt.order_by(desc(getattr(NoteORM, order_by)))
+        elif not is_desc and order_by:
+            stmt = stmt.order_by(order_by)
+
         notes = await session.scalars(stmt)
         return notes.all()
 
