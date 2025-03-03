@@ -1,4 +1,5 @@
 import datetime
+from typing import Literal
 
 from pydantic import BaseModel, Field, ConfigDict
 from typing_extensions import Annotated
@@ -35,3 +36,13 @@ class NoteShortSchema(BaseModel):
 class NoteUpdateSchema(BaseModel):
     title: Annotated[str | None, Field(max_length=25)] = None
     text: str | None = None
+
+
+class NoteFiltersSchema(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+
+    order_by: Literal["created_at", "updated_at", "id"] = Field(
+        "id", description="Field defines the field to be sorted."
+    )
