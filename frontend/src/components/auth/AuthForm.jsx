@@ -1,10 +1,13 @@
-import { useState } from "react";
-import AuthService from "../../api/authService";
+import { useContext, useState } from "react";
+import AuthStore from "../../store/authStore";
+import { AuthContext } from "../../App";
 
 const AuthForm = () => {
+    const authStore = useContext(AuthContext);
+
     async function onSubmit(e) {
         e.preventDefault();
-        await AuthService.login(username, password);
+        await authStore.login(username, password);
     }
 
     const [username, setUsername] = useState("");
