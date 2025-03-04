@@ -14,7 +14,6 @@ class AuthService {
                 }
             });
             
-            localStorage.setItem("token", response.data.access_token);
             return response;
 
         } catch (error) {
