@@ -5,9 +5,20 @@ export default {
     "./src/**/*.{js,jsx,ts,tsx}",
   ],
   theme: {
-    colors: {
-      darkBlue: "#151026"
+    extend: {
+      colors: {
+        darkBlue: "#332f42"
+      },
+      fontFamily: {
+        heebo: ['Heebo', 'sans-serif'],
+        robotoCondensed: ['Roboto Condensed', 'sans-serif'],
+        rubik: ['Rubik', 'sans-serif'],
+        yantramanav: ['Yantramanav', 'sans-serif'],
+      },
     },
+    container: {
+      center: true,
+    }
   },
   plugins: [],
 }
