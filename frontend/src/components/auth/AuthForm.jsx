@@ -1,5 +1,4 @@
 import { useContext, useState } from "react";
-import AuthStore from "../../store/authStore";
 import { AuthContext } from "../../App";
 
 const AuthForm = () => {
