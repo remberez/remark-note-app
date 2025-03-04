@@ -7,7 +7,8 @@ export default {
   theme: {
     extend: {
       colors: {
-        darkBlue: "#332f42"
+        darkBlue: "#332f42",
+        lightDarkBlue: "#4e4b70",
       },
       fontFamily: {
         heebo: ['Heebo', 'sans-serif'],
