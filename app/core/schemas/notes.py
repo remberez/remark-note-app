@@ -33,6 +33,7 @@ class NoteShortSchema(BaseModel):
 
     id: int
     title: Annotated[str, Field(max_length=25)]
+    in_favorites: bool
 
 
 class NoteUpdateSchema(BaseModel):
