@@ -60,6 +60,7 @@ async def get_user_notes(
         user_id=user.id,
         order_by=filers.order_by,
         is_desc=filers.desc,
+        in_favorites=filers.in_favorites,
     )
 
 
