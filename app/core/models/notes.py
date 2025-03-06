@@ -14,5 +14,6 @@ class NoteORM(Base, IntegerIDMixin, DateCreatedUpdatedMixin):
     title: Mapped[str] = mapped_column(String(length=25))
     text: Mapped[str]
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id", ondelete="cascade"))
+    in_favorites: Mapped[bool] = mapped_column(default=False)
 
     user: Mapped["UserORM"] = relationship(back_populates="notes")
