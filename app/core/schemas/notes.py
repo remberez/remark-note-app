@@ -51,3 +51,4 @@ class NoteFiltersSchema(BaseModel):
     )
     desc: bool = False
     in_favorites: bool | None = None
+    search: str | None = None
