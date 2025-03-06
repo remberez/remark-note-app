@@ -50,3 +50,4 @@ class NoteFiltersSchema(BaseModel):
         "id", description="Field defines the field to be sorted."
     )
     desc: bool = False
+    in_favorites: bool | None = None
