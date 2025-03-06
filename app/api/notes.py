@@ -118,3 +118,57 @@ async def change_note(
         raise HTTPException(status_code=404, detail=str(e))
     except PermissionDeniedError as e:
         raise HTTPException(status_code=403, detail=str(e))
+
+
+@router.get(
+    "/{note_id}/add-in-favorite",
+    status_code=204
+)
+async def add_in_favorite(
+        session: Annotated[
+            AsyncSession,
+            Depends(db_helper.session_getter),
+        ],
+        user: Annotated[
+            UserReadSchema,
+            Depends(current_active_verify_user),
+        ],
+        note_id: int,
+):
+    try:
+        await NoteService.add_to_favorite(
+            user_id=user.id,
+            note_id=note_id,
+            session=session,
+        )
+    except NotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except PermissionDeniedError as e:
+        raise HTTPException(status_code=403, detail=str(e))
+
+
+@router.get(
+    "/{note_id}/delete-from-favorites",
+    status_code=204,
+)
+async def delete_from_favorites(
+        session: Annotated[
+            AsyncSession,
+            Depends(db_helper.session_getter),
+        ],
+        user: Annotated[
+            UserReadSchema,
+            Depends(current_active_verify_user),
+        ],
+        note_id: int,
+):
+    try:
+        await NoteService.delete_from_favorites(
+            note_id=note_id,
+            user_id=user.id,
+            session=session,
+        )
+    except NotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except PermissionDeniedError as e:
+        raise HTTPException(status_code=403, detail=str(e))
