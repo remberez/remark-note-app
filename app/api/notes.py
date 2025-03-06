@@ -1,11 +1,22 @@
-from fastapi import APIRouter, HTTPException
-from fastapi.params import Depends, Query
+from fastapi import (
+    APIRouter,
+    HTTPException
+)
+from fastapi.params import (
+    Depends, Query
+)
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing_extensions import Annotated
 
 from core.config import settings
 from core.models import db_helper
-from core.schemas.notes import NoteReadSchema, NoteAddSchema, NoteShortSchema, NoteUpdateSchema, NoteFiltersSchema
+from core.schemas.notes import (
+    NoteReadSchema,
+    NoteAddSchema,
+    NoteShortSchema,
+    NoteUpdateSchema,
+    NoteFiltersSchema,
+)
 from core.schemas.users import UserReadSchema
 from core.services.notes import NoteService
 from core.types.exceptions import (
