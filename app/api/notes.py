@@ -43,17 +43,12 @@ async def get_user_notes(
     """
     Returns a list of all the user's notes by user ID.
     """
-    desc = False
-    if filers.order_by[0] == "-":
-        desc = True
-
-    order_by = filers.order_by.removeprefix("-")
 
     return await NoteService.get_user_notes(
         session=session,
         user_id=user.id,
-        order_by=order_by,
-        is_desc=desc,
+        order_by=filers.order_by,
+        is_desc=filers.desc,
     )
 
 

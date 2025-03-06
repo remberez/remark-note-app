@@ -4,6 +4,8 @@ from typing import Literal
 from pydantic import BaseModel, Field, ConfigDict
 from typing_extensions import Annotated
 
+from core.schemas.base import OrderByDateFields
+
 
 class NoteSchema(BaseModel):
     model_config = ConfigDict(
@@ -43,13 +45,7 @@ class NoteFiltersSchema(BaseModel):
         extra="forbid",
     )
 
-    order_by: Literal[
-        "created_at",
-        "updated_at",
-        "id",
-        "-created_at",
-        "-updated_at",
-        "-id",
-    ] = Field(
+    order_by: OrderByDateFields | Literal["id"] = Field(
         "id", description="Field defines the field to be sorted."
     )
+    desc: bool = False
