@@ -93,3 +93,33 @@ class NoteService:
 
         await session.delete(note)
         await session.commit()
+
+    @staticmethod
+    async def add_to_favorite(
+            *,
+            note_id: int,
+            user_id: int,
+            session: AsyncSession,
+    ) -> None:
+        note = await NoteService.get_note(
+            note_id=note_id,
+            user_id=user_id,
+            session=session,
+        )
+        note.in_favorites = True
+        await session.commit()
+
+    @staticmethod
+    async def delete_from_favorites(
+            *,
+            user_id: int,
+            note_id: int,
+            session: AsyncSession,
+    ) -> None:
+        note = await NoteService.get_note(
+            user_id=user_id,
+            note_id=note_id,
+            session=session,
+        )
+        note.in_favorites = False
+        await session.commit()
