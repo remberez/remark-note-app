@@ -1,3 +1,5 @@
+from typing import Type
+
 from pydantic import BaseModel
 from sqlalchemy import update, delete, select, Sequence
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -12,7 +14,7 @@ class SQLAlchemyRepository[
     CreateSchemaType: BaseModel,
     UpdateSchemaType: BaseModel,
 ](AbstractRepository):
-    def __init__(self, model: ModelType, session: AsyncSession):
+    def __init__(self, model: Type[ModelType], session: AsyncSession):
         self._session = session
         self.model = model
 
