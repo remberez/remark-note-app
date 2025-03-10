@@ -1,10 +1,17 @@
+from pydantic import BaseModel
 from sqlalchemy import update, delete, select, Sequence
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from abc_repository import AbstractRepository
+from core.models import Base
 
 
-class SQLAlchemyRepository[ModelType, CreateSchemaType, UpdateSchemaType](AbstractRepository):
+# python version 3.12+
+class SQLAlchemyRepository[
+    ModelType: Base,
+    CreateSchemaType: BaseModel,
+    UpdateSchemaType: BaseModel,
+](AbstractRepository):
     def __init__(self, model: ModelType, session: AsyncSession):
         self._session = session
         self.model = model
