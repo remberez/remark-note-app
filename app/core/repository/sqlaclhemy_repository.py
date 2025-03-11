@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from sqlalchemy import update, delete, select, Sequence
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from abc_repository import AbstractRepository
+from .abc_repository import AbstractRepository
 from core.models import Base
 
 
