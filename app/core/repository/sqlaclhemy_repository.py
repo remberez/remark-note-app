@@ -45,8 +45,23 @@ class SQLAlchemyRepository[
             await session.refresh(instance)
             return instance
 
-    async def list(self, **filters) -> Sequence[ModelType]:
+    async def list(
+            self,
+            order_by: str = None,
+            desc: bool = False,
+            **filters,
+    ) -> Sequence[ModelType]:
         async with self._session as session:
             stmt = select(self.model).filter_by(**filters)
+
+            if order_by:
+                column = getattr(self.model, order_by, None)
+
+                if column is not None:
+                    if desc:
+                        stmt = stmt.order_by(column.desc())
+                    else:
+                        stmt = stmt.order_by(column)
+
             result = await session.execute(stmt)
             return result.scalars().all()
