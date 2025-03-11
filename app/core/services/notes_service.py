@@ -11,5 +11,14 @@ class NoteService(BaseService):
     def __init__(self, repository: AbstractRepository):
         super().__init__(repository)
 
-    async def get_user_notes(self, user_id: int) -> Sequence[Model]:
-        return await self.repository.list(user_id=user_id)
+    async def get_user_notes(
+            self,
+            user_id: int,
+            order_by: str = None,
+            desc: bool = False,
+    ) -> Sequence[Model]:
+        return await self.repository.list(
+            user_id=user_id,
+            order_by=order_by,
+            desc=desc,
+        )
