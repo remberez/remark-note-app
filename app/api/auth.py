@@ -1,4 +1,3 @@
-import fastapi_users.router
 from fastapi import APIRouter
 
 from core.schemas.users import UserReadSchema, UserCreateSchema

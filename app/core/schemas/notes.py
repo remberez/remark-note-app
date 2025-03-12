@@ -21,7 +21,7 @@ class NoteSchema(BaseModel):
 class NoteReadSchema(NoteSchema):
     id: int
     created_at: datetime.datetime | None = None
-    update_at: datetime.datetime | None = None
+    updated_at: datetime.datetime | None = None
 
 
 class NoteAddSchema(NoteSchema):
