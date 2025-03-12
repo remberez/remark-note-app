@@ -2,14 +2,11 @@ from fastapi import (
     APIRouter,
     HTTPException
 )
-from fastapi.params import (
-    Depends, Query
-)
-from sqlalchemy.ext.asyncio import AsyncSession
-from typing_extensions import Annotated
+from fastapi.params import Query
+from fastapi import Depends
+from typing import Annotated
 
 from core.config import settings
-from core.models import db_helper
 from core.schemas.notes import (
     NoteReadSchema,
     NoteAddSchema,
@@ -25,6 +22,7 @@ from core.types.exceptions import (
 )
 
 from .dependencies.auth.current_user import current_active_verify_user
+from .dependencies.services.notes import get_note_service
 
 router = APIRouter(
     prefix=settings.api.notes,
@@ -38,49 +36,36 @@ router = APIRouter(
     summary="Get all user notes."
 )
 async def get_user_notes(
-        session: Annotated[
-            AsyncSession,
-            Depends(db_helper.session_getter)
-        ],
-        user: Annotated[
-            UserReadSchema,
-            Depends(current_active_verify_user)
-        ],
-        filers: Annotated[
-            NoteFiltersSchema,
-            Query(),
-        ]
+        service: Annotated[NoteService, Depends(get_note_service)],
+        user: Annotated[UserReadSchema, Depends(current_active_verify_user)],
+        filters: Annotated[NoteFiltersSchema, Query()],
 ):
     """
-    Returns a list of all the user's notes by user ID.
+    Возвращает все заметки пользователя.
     """
-
-    return await NoteService.get_user_notes(
-        session=session,
-        user_id=user.id,
-        order_by=filers.order_by,
-        is_desc=filers.desc,
-        in_favorites=filers.in_favorites,
-    )
+    return await service.list(user_id=user.id, filters=filters)
 
 
 @router.post("", response_model=NoteReadSchema)
 async def add_note(
         note: NoteAddSchema,
-        session: Annotated[AsyncSession, Depends(db_helper.session_getter)],
+        service: Annotated[NoteService, Depends(get_note_service)],
         user: Annotated[UserReadSchema, Depends(current_active_verify_user)],
 ):
-    return await NoteService.add_note(note=note, session=session, user_id=user.id)
+    """
+    Добавляет новую заметку и присваивает пользователю.
+    """
+    return await service.create(note=note, user_id=user.id)
 
 
 @router.delete("/{note_id}", status_code=204)
 async def delete_note(
         note_id: int,
         user: Annotated[UserReadSchema, Depends(current_active_verify_user)],
-        session: Annotated[AsyncSession, Depends(db_helper.session_getter)],
+        service: Annotated[NoteService, Depends(get_note_service)],
 ):
     try:
-        await NoteService.delete_user_note(note_id=note_id, session=session, user_id=user.id)
+        await service.delete(note_id=note_id, user_id=user.id)
     except NotFoundError as e:
         raise HTTPException(status_code=404, detail=str(e))
     except PermissionDeniedError as e:
@@ -91,10 +76,10 @@ async def delete_note(
 async def get_note(
         note_id: int,
         user: Annotated[UserReadSchema, Depends(current_active_verify_user)],
-        session: Annotated[AsyncSession, Depends(db_helper.session_getter)],
+        service: Annotated[NoteService, Depends(get_note_service)],
 ):
     try:
-        return await NoteService.get_note(note_id=note_id, session=session, user_id=user.id)
+        return await service.get(note_id=note_id, user_id=user.id)
     except NotFoundError as e:
         raise HTTPException(status_code=404, detail=str(e))
     except PermissionDeniedError as e:
@@ -102,19 +87,18 @@ async def get_note(
 
 
 @router.patch("/{note_id}", response_model=NoteReadSchema)
-async def change_note(
+async def update_note(
         note_id: int,
         note: NoteUpdateSchema,
         user: Annotated[UserReadSchema, Depends(current_active_verify_user)],
-        session: Annotated[AsyncSession, Depends(db_helper.session_getter)]
+        service: Annotated[NoteService, Depends(get_note_service)],
 ):
+    """
+    Обновляет заметка пользователя и обрабатывает исключения, связанные с попыткой изменить
+    чужую заметку и отсутствием заметки.
+    """
     try:
-        return await NoteService.change_note(
-            note_id=note_id,
-            note_schema=note,
-            user_id=user.id,
-            session=session,
-        )
+        return await service.update(note_id=note_id, note_schema=note, user_id=user.id)
     except NotFoundError as e:
         raise HTTPException(status_code=404, detail=str(e))
     except PermissionDeniedError as e:
@@ -126,22 +110,12 @@ async def change_note(
     status_code=204
 )
 async def add_in_favorite(
-        session: Annotated[
-            AsyncSession,
-            Depends(db_helper.session_getter),
-        ],
-        user: Annotated[
-            UserReadSchema,
-            Depends(current_active_verify_user),
-        ],
+        user: Annotated[UserReadSchema, Depends(current_active_verify_user)],
         note_id: int,
+        service: Annotated[NoteService, Depends(get_note_service)],
 ):
     try:
-        await NoteService.add_to_favorite(
-            user_id=user.id,
-            note_id=note_id,
-            session=session,
-        )
+        await service.add_to_favorites(note_id=note_id, user_id=user.id)
     except NotFoundError as e:
         raise HTTPException(status_code=404, detail=str(e))
     except PermissionDeniedError as e:
@@ -153,22 +127,12 @@ async def add_in_favorite(
     status_code=204,
 )
 async def delete_from_favorites(
-        session: Annotated[
-            AsyncSession,
-            Depends(db_helper.session_getter),
-        ],
-        user: Annotated[
-            UserReadSchema,
-            Depends(current_active_verify_user),
-        ],
+        service: Annotated[NoteService, Depends(get_note_service)],
+        user: Annotated[UserReadSchema, Depends(current_active_verify_user)],
         note_id: int,
 ):
     try:
-        await NoteService.delete_from_favorites(
-            note_id=note_id,
-            user_id=user.id,
-            session=session,
-        )
+        await service.remove_from_favorites(note_id=note_id, user_id=user.id)
     except NotFoundError as e:
         raise HTTPException(status_code=404, detail=str(e))
     except PermissionDeniedError as e:

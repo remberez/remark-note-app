@@ -1,129 +1,45 @@
-from typing import Literal
+from sqlalchemy import Sequence
 
-from sqlalchemy import Sequence, select, desc
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import joinedload
-
-from core.models.notes import NoteORM
-from core.schemas.notes import NoteAddSchema, NoteUpdateSchema
+from core.repository.notes import NoteRepository
+from core.schemas.notes import NoteAddSchema, NoteReadSchema, NoteUpdateSchema, NoteFiltersSchema
 from core.types.exceptions import NotFoundError, PermissionDeniedError
 
 
 class NoteService:
-    @staticmethod
-    async def add_note(
-            *,
-            note: NoteAddSchema,
-            user_id: int,
-            session: AsyncSession,
-    ) -> NoteORM:
-        note = NoteORM(**note.model_dump(), user_id=user_id)
-        session.add(note)
-        await session.commit()
-        return note
+    def __init__(self, repository: NoteRepository) -> None:
+        self._repository: NoteRepository = repository
 
-    @staticmethod
-    async def get_note(
-            *,
-            note_id: int,
-            user_id: int,
-            session: AsyncSession,
-    ) -> NoteORM:
-        stmt = select(NoteORM).options(joinedload(NoteORM.user)).filter_by(id=note_id)
-        note: NoteORM = (await session.scalars(stmt)).first()
-
-        if not note:
-            raise NotFoundError("Not found.")
-
-        if note.user.id != user_id:
-            raise PermissionDeniedError("You do not have permission to delete this note.")
-
-        return note
-
-    @staticmethod
-    async def change_note(
-            note_id: int,
-            note_schema: NoteUpdateSchema,
-            user_id: int,
-            session: AsyncSession,
-    ) -> NoteORM:
-        note = await NoteService.get_note(
-            note_id=note_id,
+    async def list(self, user_id: int, filters: NoteFiltersSchema) -> Sequence[NoteReadSchema]:
+        return await self._repository.list(
             user_id=user_id,
-            session=session,
+            order_by=filters.order_by,
+            in_favorites=filters.in_favorites,
+            is_desc=filters.desc,
         )
 
-        for key, value in note_schema.model_dump(exclude_none=True).items():
-            setattr(note, key, value)
-        await session.commit()
+    async def create(self, note: NoteAddSchema, user_id: int) -> NoteReadSchema:
+        return await self._repository.create(**note.model_dump(), user_id=user_id)
+
+    async def update(self, note_schema: NoteUpdateSchema, note_id: int, user_id: int) -> NoteReadSchema:
+        await self.get(note_id=note_id, user_id=user_id)
+        return await self._repository.update(note_id=note_id, **note_schema.model_dump())
+
+    async def delete(self, note_id: int, user_id: int) -> None:
+        await self.get(note_id=note_id, user_id=user_id)
+        await self._repository.delete(note_id=note_id)
+
+    async def get(self, note_id: int, user_id: int) -> NoteReadSchema:
+        note = await self._repository.get(note_id=note_id)
+        if note is None:
+            raise NotFoundError("Note not found")
+        elif note.user_id != user_id:
+            raise PermissionDeniedError("You don't have permission to view this note")
         return note
 
-    @staticmethod
-    async def get_user_notes(
-            session: AsyncSession,
-            user_id: int,
-            order_by: str | None = None,
-            is_desc: bool = False,
-            in_favorites: bool | None = None
-    ) -> Sequence[NoteORM]:
-        stmt = select(NoteORM).filter_by(user_id=user_id)
+    async def add_to_favorites(self, note_id: int, user_id: int) -> None:
+        await self.get(note_id=note_id, user_id=user_id)
+        await self._repository.update(note_id=note_id, is_favorite=True)
 
-        if is_desc and order_by:
-            stmt = stmt.order_by(desc(getattr(NoteORM, order_by)))
-        elif not is_desc and order_by:
-            stmt = stmt.order_by(order_by)
-
-        if not (in_favorites is None):
-            stmt = stmt.filter_by(in_favorites=in_favorites)
-
-        notes = await session.scalars(stmt)
-        return notes.all()
-
-    @staticmethod
-    async def delete_user_note(
-            *,
-            session: AsyncSession,
-            user_id: int,
-            note_id: int,
-    ) -> None:
-        stmt = select(NoteORM).options(joinedload(NoteORM.user)).filter_by(id=note_id)
-        note: NoteORM = (await session.scalars(stmt)).first()
-
-        if not note:
-            raise NotFoundError("Not found.")
-
-        if note.user.id != user_id:
-            raise PermissionDeniedError("You do not have permission to delete this note.")
-
-        await session.delete(note)
-        await session.commit()
-
-    @staticmethod
-    async def add_to_favorite(
-            *,
-            note_id: int,
-            user_id: int,
-            session: AsyncSession,
-    ) -> None:
-        note = await NoteService.get_note(
-            note_id=note_id,
-            user_id=user_id,
-            session=session,
-        )
-        note.in_favorites = True
-        await session.commit()
-
-    @staticmethod
-    async def delete_from_favorites(
-            *,
-            user_id: int,
-            note_id: int,
-            session: AsyncSession,
-    ) -> None:
-        note = await NoteService.get_note(
-            user_id=user_id,
-            note_id=note_id,
-            session=session,
-        )
-        note.in_favorites = False
-        await session.commit()
+    async def remove_from_favorites(self, note_id: int, user_id: int) -> None:
+        await self.get(note_id=note_id, user_id=user_id)
+        await self._repository.update(note_id=note_id, is_favorite=False)

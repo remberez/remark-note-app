@@ -1,67 +1,13 @@
-from typing import Type
+from abc import ABC
 
-from pydantic import BaseModel
-from sqlalchemy import update, delete, select, Sequence
 from sqlalchemy.ext.asyncio import AsyncSession
-
 from .abc_repository import AbstractRepository
-from core.models import Base
 
 
-# python version 3.12+
-class SQLAlchemyRepository[
-    ModelType: Base,
-    CreateSchemaType: BaseModel,
-    UpdateSchemaType: BaseModel,
-](AbstractRepository):
-    def __init__(self, model: Type[ModelType], session: AsyncSession):
+class SQLAlchemyAbstractRepository[Model](AbstractRepository[Model], ABC):
+    """
+    Интерфейс SQLAlchemy репозитория, от которого должны наследоваться все репозитории,
+    которые будут использовать SQLAlchemy ORM.
+    """
+    def __init__(self, session: AsyncSession) -> None:
         self._session = session
-        self.model = model
-
-    async def get(self, **filters) -> ModelType:
-        async with self._session as session:
-            stmt = select(self.model).filter_by(**filters)
-            result = await session.execute(stmt)
-            return result.scalar_one()
-
-    async def update(self, data: UpdateSchemaType, **filters) -> ModelType:
-        async with self._session as session:
-            stmt = update(self.model).filter_by(**filters).values(**data)
-            result = await session.execute(stmt)
-            await session.commit()
-            return result.scalar_one()
-
-    async def delete(self, **filters) -> None:
-        async with self._session as session:
-            stmt = delete(self.model).filter_by(**filters)
-            await session.execute(stmt)
-            await session.commit()
-
-    async def create(self, data: CreateSchemaType) -> ModelType:
-        async with self._session as session:
-            instance = self.model(**data)
-            session.add(instance)
-            await session.commit()
-            await session.refresh(instance)
-            return instance
-
-    async def list(
-            self,
-            order_by: str = None,
-            desc: bool = False,
-            **filters,
-    ) -> Sequence[ModelType]:
-        async with self._session as session:
-            stmt = select(self.model).filter_by(**filters)
-
-            if order_by:
-                column = getattr(self.model, order_by, None)
-
-                if column is not None:
-                    if desc:
-                        stmt = stmt.order_by(column.desc())
-                    else:
-                        stmt = stmt.order_by(column)
-
-            result = await session.execute(stmt)
-            return result.scalars().all()

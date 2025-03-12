@@ -1,7 +1,9 @@
 import datetime
 from typing import Literal
 
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import (
+    BaseModel, Field, ConfigDict
+)
 from typing_extensions import Annotated
 
 from core.schemas.base import OrderByDateFields
