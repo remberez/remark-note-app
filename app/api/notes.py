@@ -1,7 +1,4 @@
-from fastapi import (
-    APIRouter,
-    HTTPException
-)
+from fastapi import APIRouter
 from fastapi.params import Query
 from fastapi import Depends
 from typing import Annotated
@@ -16,10 +13,6 @@ from core.schemas.notes import (
 )
 from core.schemas.users import UserReadSchema
 from core.services.notes import NoteService
-from core.types.exceptions import (
-    NotFoundError,
-    PermissionDeniedError,
-)
 
 from .dependencies.auth.current_user import current_active_verify_user
 from .dependencies.services.notes import get_note_service
@@ -55,10 +48,7 @@ async def add_note(
     """
     Добавляет новую заметку и присваивает пользователю.
     """
-    try:
-        return await service.create(note=note, user_id=user.id)
-    except PermissionDeniedError as e:
-        raise HTTPException(status_code=403, detail=str(e))
+    return await service.create(note=note, user_id=user.id)
 
 
 @router.delete("/{note_id}", status_code=204)
@@ -67,12 +57,7 @@ async def delete_note(
         user: Annotated[UserReadSchema, Depends(current_active_verify_user)],
         service: Annotated[NoteService, Depends(get_note_service)],
 ):
-    try:
-        await service.delete(note_id=note_id, user_id=user.id)
-    except NotFoundError as e:
-        raise HTTPException(status_code=404, detail=str(e))
-    except PermissionDeniedError as e:
-        raise HTTPException(status_code=403, detail=str(e))
+    await service.delete(note_id=note_id, user_id=user.id)
 
 
 @router.get("/{note_id}", response_model=NoteReadSchema)
@@ -81,12 +66,7 @@ async def get_note(
         user: Annotated[UserReadSchema, Depends(current_active_verify_user)],
         service: Annotated[NoteService, Depends(get_note_service)],
 ):
-    try:
-        return await service.get(note_id=note_id, user_id=user.id)
-    except NotFoundError as e:
-        raise HTTPException(status_code=404, detail=str(e))
-    except PermissionDeniedError as e:
-        raise HTTPException(status_code=403, detail=str(e))
+    return await service.get(note_id=note_id, user_id=user.id)
 
 
 @router.patch("/{note_id}", response_model=NoteReadSchema)
@@ -100,12 +80,7 @@ async def update_note(
     Обновляет заметка пользователя и обрабатывает исключения, связанные с попыткой изменить
     чужую заметку и отсутствием заметки.
     """
-    try:
-        return await service.update(note_id=note_id, note_schema=note, user_id=user.id)
-    except NotFoundError as e:
-        raise HTTPException(status_code=404, detail=str(e))
-    except PermissionDeniedError as e:
-        raise HTTPException(status_code=403, detail=str(e))
+    return await service.update(note_id=note_id, note_schema=note, user_id=user.id)
 
 
 @router.get(
@@ -117,12 +92,7 @@ async def add_in_favorite(
         note_id: int,
         service: Annotated[NoteService, Depends(get_note_service)],
 ):
-    try:
-        await service.add_to_favorites(note_id=note_id, user_id=user.id)
-    except NotFoundError as e:
-        raise HTTPException(status_code=404, detail=str(e))
-    except PermissionDeniedError as e:
-        raise HTTPException(status_code=403, detail=str(e))
+    await service.add_to_favorites(note_id=note_id, user_id=user.id)
 
 
 @router.get(
@@ -134,9 +104,4 @@ async def delete_from_favorites(
         user: Annotated[UserReadSchema, Depends(current_active_verify_user)],
         note_id: int,
 ):
-    try:
-        await service.remove_from_favorites(note_id=note_id, user_id=user.id)
-    except NotFoundError as e:
-        raise HTTPException(status_code=404, detail=str(e))
-    except PermissionDeniedError as e:
-        raise HTTPException(status_code=403, detail=str(e))
+    await service.remove_from_favorites(note_id=note_id, user_id=user.id)
