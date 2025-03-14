@@ -55,7 +55,10 @@ async def add_note(
     """
     Добавляет новую заметку и присваивает пользователю.
     """
-    return await service.create(note=note, user_id=user.id)
+    try:
+        return await service.create(note=note, user_id=user.id)
+    except PermissionDeniedError as e:
+        raise HTTPException(status_code=403, detail=str(e))
 
 
 @router.delete("/{note_id}", status_code=204)

@@ -3,7 +3,7 @@ from abc import (
 )
 
 from sqlalchemy import (
-    select, delete, update, desc, asc
+    select, delete, update, desc, asc, func
 )
 from typing_extensions import (
     TypeVar, Sequence
@@ -39,6 +39,10 @@ class NoteRepository(AbstractRepository[NoteModel], ABC):
 
     @abstractmethod
     async def find_by_title(self, title: str) -> Sequence[NoteModel]:
+        raise NotImplementedError
+
+    @abstractmethod
+    async def user_note_counter(self, user_id: int) -> int:
         raise NotImplementedError
 
 
@@ -85,3 +89,8 @@ class SQLAlchemyNoteRepository(SQLAlchemyAbstractRepository[NoteORM], NoteReposi
         stmt = select(NoteORM).where(NoteORM.title.like("%" + title + "%"))
         result = await self._session.execute(stmt)
         return result.scalars().all()
+
+    async def user_note_counter(self, user_id: int) -> int:
+        stmt = select(func.count(NoteORM.id)).where(NoteORM.user_id == user_id)
+        result = await self._session.execute(stmt)
+        return result.scalar_one()

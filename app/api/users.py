@@ -7,7 +7,7 @@ from typing_extensions import Annotated
 
 from core.schemas.users import UserReadSchema, UserUpdateSchema
 from core.services.users import UserService
-from core.types.exceptions import NotFoundError
+from core.types.exceptions import NotFoundError, PermissionDeniedError
 from .dependencies.auth.current_user import current_active_verify_user
 from .dependencies.auth.fastapi_users import fastapi_users
 from core.config import settings

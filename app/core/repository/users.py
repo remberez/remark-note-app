@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from datetime import datetime
 
 from typing_extensions import Sequence
 
@@ -27,6 +28,10 @@ class UserAbstractRepository(AbstractRepository, ABC):
 
     @abstractmethod
     async def list(self, *args, **kwargs) -> Sequence[UserORM]:
+        raise NotImplementedError
+
+    @abstractmethod
+    async def is_premium(self, user_id: int) -> bool:
         raise NotImplementedError
 
 
@@ -58,3 +63,7 @@ class UserSQLAlchemyRepository(UserAbstractRepository, SQLAlchemyAbstractReposit
 
     async def list(self, *args, **kwargs) -> Sequence[UserORM]:
         raise NotImplementedError
+
+    async def is_premium(self, user_id: int) -> bool:
+        user = await self.get(user_id=user_id)
+        return user.premium_end_date is not None and datetime.now() > user.premium_end_date
