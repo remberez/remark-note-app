@@ -3,7 +3,7 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import logo from "../assets/logo.png";
 
-const RegisterPage = () => {
+const AuthPage = () => {
     const initialValues = {
         email: '',
         password: '',
@@ -74,4 +74,4 @@ const RegisterPage = () => {
     );
 };
 
-export default RegisterPage;
+export default AuthPage;
