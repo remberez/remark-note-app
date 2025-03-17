@@ -16,6 +16,7 @@ export default {
       colors: {
         black: "#111114",
         grayText: "#B3B3B3",
+        green: "#499F8E",
       },
       fontFamily: {
         unbounded: ["Unbounded", "sans-serif"],
