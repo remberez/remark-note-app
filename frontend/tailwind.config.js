@@ -17,6 +17,7 @@ export default {
         black: "#111114",
         grayText: "#B3B3B3",
         green: "#499F8E",
+        pageColor: "#1B1B1B",
       },
       fontFamily: {
         unbounded: ["Unbounded", "sans-serif"],
