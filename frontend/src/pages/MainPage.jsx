@@ -1,3 +1,4 @@
+import AppDescription from "../components/AppDescription";
 import Devices from "../components/Devices";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
@@ -10,6 +11,7 @@ const MainPage = () => {
             <main className="flex-grow">
                 <MainHeader/>
                 <Devices/>
+                <AppDescription/>
             </main>
             <Footer />
         </div>
