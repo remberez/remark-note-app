@@ -2,6 +2,7 @@ import React from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import logo from "../assets/logo.png";
+import AuthService from '../services/AuthService';
 
 const AuthPage = () => {
     const initialValues = {
@@ -14,13 +15,12 @@ const AuthPage = () => {
             .email('Некорректный email адрес')
             .required('Обязательное поле'),
         password: Yup.string()
-            .min(6, 'Пароль должен быть не менее 6 символов')
+            .min(3, 'Пароль должен быть не менее 6 символов')
             .required('Обязательное поле'),
     });
 
-    const onSubmit = (values, { setSubmitting }) => {
-        console.log(values);
-        setSubmitting(false);
+    const onSubmit = async (values, { setSubmitting }) => {
+        await AuthService.login(values.email, values.password)
     };
 
     return (

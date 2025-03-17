@@ -2,7 +2,7 @@ import uvicorn
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.core.models import db_helper
+from core.models import db_helper
 from core.config import settings
 from contextlib import asynccontextmanager
 from api import router
