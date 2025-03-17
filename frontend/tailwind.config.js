@@ -10,7 +10,8 @@ export default {
         screens: {
           xl: "1200px",
           "2xl": "1200px",
-        }
+        },
+        padding: "10px",
       },
       colors: {
         black: "#111114",
