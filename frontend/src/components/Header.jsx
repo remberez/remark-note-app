@@ -1,7 +1,9 @@
 import logo from "../assets/logo.png";
 import { Link } from "react-router-dom";
+import authStore from "../store/authStore";
+import { observer } from "mobx-react-lite";
 
-const Header = () => {
+const Header = observer(() => {
     return (
         <header className="bg-black font-unbounded">
             <nav className="container flex justify-between text-white py-6 items-center">
@@ -21,13 +23,17 @@ const Header = () => {
                             <Link>Сообщество</Link>
                         </li>
                         <li>
-                            <Link>Аккаунт</Link>
+                            {
+                                authStore.isAuth ? 
+                                <Link>{authStore.user?.email?.split("@")[0]}</Link> :
+                                <Link to={"/auth"}>Аккаунт</Link>
+                            }
                         </li>
                     </ul>
                 </div>
             </nav>
         </header>
     )
-}
+})
 
 export default Header;

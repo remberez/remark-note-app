@@ -1,7 +1,9 @@
 import { makeAutoObservable } from "mobx";
+import AuthService from "../services/AuthService";
 
 class AuthStore {
     isAuth = false;
+    user = {};
 
     constructor() {
         makeAutoObservable(this);
@@ -19,4 +21,12 @@ class AuthStore {
             localStorage.removeItem("token");
         }
     }
+
+    async setUser() {
+        const data = await AuthService.fetchMe();
+        this.user = data;
+    }
 }
+
+const authStore = new AuthStore();
+export default authStore;

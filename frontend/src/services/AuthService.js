@@ -13,9 +13,17 @@ class AuthService {
                     "Content-Type": "application/x-www-form-urlencoded",
                 }
             });
-            localStorage.setItem("token", response.data.access_token);
-
+            return response.data.access_token;
         } catch (error) {
+            console.error(error);
+        }
+    }
+
+    static async fetchMe() {
+        try {
+            const response = await api.get("/users/me");
+            return response.data;
+        } catch(error) {
             console.error(error);
         }
     }

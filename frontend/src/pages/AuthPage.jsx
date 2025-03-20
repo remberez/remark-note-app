@@ -3,6 +3,8 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import logo from "../assets/logo.png";
 import AuthService from '../services/AuthService';
+import authStore from '../store/authStore';
+import { observer } from "mobx-react-lite";
 
 const AuthPage = () => {
     const initialValues = {
@@ -19,8 +21,10 @@ const AuthPage = () => {
             .required('Обязательное поле'),
     });
 
+    console.log(authStore.isAuth);
     const onSubmit = async (values, { setSubmitting }) => {
-        await AuthService.login(values.email, values.password)
+        const token = await AuthService.login(values.email, values.password)
+        authStore.setToken(token);
     };
 
     return (
@@ -74,4 +78,4 @@ const AuthPage = () => {
     );
 };
 
-export default AuthPage;
+export default observer(AuthPage);
