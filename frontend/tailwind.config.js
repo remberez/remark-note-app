@@ -20,6 +20,8 @@ export default {
         pageColor: "#1B1B1B",
         orange: "#955B53",
         ocean: "#ABBFFF",
+        veryLightGray: "#434343",
+        lightGray: "#292929",
       },
       fontFamily: {
         unbounded: ["Unbounded", "sans-serif"],
