@@ -1,3 +1,4 @@
+import NoteTextField from "../components/NoteTextField";
 import TabLine from "../components/TabLine";
 
 const WorkSpacePage = () => {
@@ -6,7 +7,7 @@ const WorkSpacePage = () => {
             <div className="border border-gray-500">1</div>
             <TabLine/>
             <div className="border border-gray-500">3</div>
-            <div className="border border-gray-500">4</div>
+            <NoteTextField/>
         </div>
     );
 };
