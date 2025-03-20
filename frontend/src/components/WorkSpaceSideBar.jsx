@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import NoteService from "../services/noteService";
 
-const SideBar = () => {
+const SideBar = ({ setOpenNotes }) => {
     const [notes, setNotes] = useState([]);
         
     useEffect(() => {
@@ -16,6 +16,11 @@ const SideBar = () => {
         
         fetchNotes();
     }, [])
+
+    function onNoteClick(e, title, id) {
+        e.preventDefault();
+        setOpenNotes(id, title);
+    }
 
     return (
         <aside className="flex bg-lightGray">
@@ -36,9 +41,13 @@ const SideBar = () => {
                 </div>
                 <ul className="text-white flex flex-col gap-y-4 mt-4">
                     {
-                        notes.map(value => (
+                        notes.map((value) => (
                             <li>
-                                <Link>
+                                <Link
+                                    to={"#"}
+                                    onClick={e => onNoteClick(e, value.title, value.id)}
+                                    key={value.id}
+                                >
                                     { value.title }
                                 </Link>
                             </li>
