@@ -5,8 +5,10 @@ import logo from "../assets/logo.png";
 import AuthService from '../services/AuthService';
 import authStore from '../store/authStore';
 import { observer } from "mobx-react-lite";
+import { useNavigate } from 'react-router-dom';
 
 const AuthPage = () => {
+    const navigate = useNavigate();
     const initialValues = {
         email: '',
         password: '',
@@ -21,10 +23,13 @@ const AuthPage = () => {
             .required('Обязательное поле'),
     });
 
-    console.log(authStore.isAuth);
     const onSubmit = async (values, { setSubmitting }) => {
         const token = await AuthService.login(values.email, values.password)
         authStore.setToken(token);
+
+        if (token) {
+            navigate("/");
+        }
     };
 
     return (
