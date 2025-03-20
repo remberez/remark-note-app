@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 const MainHeader = () => {
     return (
         <div className="bg-pageColor">
@@ -9,9 +11,9 @@ const MainHeader = () => {
                     <p className="text-xl text-grayText mb-[75px] max-w-[500px]">
                         Бесплатное и гибкое приложение для ваших личных мыслей.
                     </p>
-                    <button className="bg-green px-[70px] py-[10px] rounded-lg">
+                    <Link className="bg-green px-[70px] py-[10px] rounded-lg" to="/workspace">
                         Начать
-                    </button>
+                    </Link>
                 </div>
             </section>
         </div>
