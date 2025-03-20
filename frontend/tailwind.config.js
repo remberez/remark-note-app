@@ -22,6 +22,7 @@ export default {
         ocean: "#ABBFFF",
         veryLightGray: "#434343",
         lightGray: "#292929",
+        yellow: "#F5B400",
       },
       fontFamily: {
         unbounded: ["Unbounded", "sans-serif"],

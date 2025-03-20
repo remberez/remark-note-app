@@ -9,13 +9,17 @@ const NoteTextField = () => {
     useEffect(() => {
         const fetchNote = async (noteId) => {
             const response = await NoteService.fetchDetailNote(noteId);
-            console.log(response.text);
             setTextData(response);
         }
         fetchNote(noteId);
     }, [noteId])
     return (
         <section className="bg-black overflow-hidden">
+            <input
+                value={textData.title}
+                onChange={e => setTextData({...textData, title: e.target.value})} 
+                className="outline-none bg-black w-full px-60 pt-10 text-yellow text-2xl"
+            />
             <textarea
                 className="bg-black text-white p-2 resize-none outline-none h-full w-full px-60 pt-10"
                 value={textData.text}
