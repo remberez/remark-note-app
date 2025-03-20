@@ -24,7 +24,13 @@ class AuthStore {
 
     async setUser() {
         const data = await AuthService.fetchMe();
-        this.user = data;
+        if (data) {
+            this.user = data;
+            this.setIsAuth(true);
+        } else {
+            this.setIsAuth(false);
+            this.user = {};
+        }
     }
 }
 
