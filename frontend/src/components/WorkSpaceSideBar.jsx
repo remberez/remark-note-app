@@ -1,7 +1,7 @@
 import { RiStickyNoteAddLine } from "react-icons/ri";
 import { FaFolderPlus } from "react-icons/fa";
 import { FaSortAmountDownAlt } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { useEffect, useState } from "react";
 import NoteService from "../services/noteService";
 
@@ -18,7 +18,6 @@ const SideBar = ({ setOpenNotes }) => {
     }, [])
 
     function onNoteClick(e, title, id) {
-        e.preventDefault();
         setOpenNotes(id, title);
     }
 
@@ -43,13 +42,13 @@ const SideBar = ({ setOpenNotes }) => {
                     {
                         notes.map((value) => (
                             <li>
-                                <Link
-                                    to={"#"}
+                                <NavLink
+                                    to={`/workspace/note/${value.id}`}
                                     onClick={e => onNoteClick(e, value.title, value.id)}
                                     key={value.id}
                                 >
                                     { value.title }
-                                </Link>
+                                </NavLink>
                             </li>
                         ))
                     }

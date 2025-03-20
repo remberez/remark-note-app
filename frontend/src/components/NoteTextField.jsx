@@ -1,4 +1,8 @@
+import { useParams } from "react-router-dom";
+
 const NoteTextField = () => {
+    const {noteId} = useParams()
+
     return (
         <section className="bg-black overflow-hidden">
             <textarea
