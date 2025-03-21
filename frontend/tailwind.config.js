@@ -23,6 +23,7 @@ export default {
         veryLightGray: "#434343",
         lightGray: "#292929",
         yellow: "#F5B400",
+        grayBgText: "#4D4D4D",
       },
       fontFamily: {
         unbounded: ["Unbounded", "sans-serif"],

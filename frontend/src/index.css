@@ -1,3 +1,28 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+.styledScroll {
+    scrollbar-width: thin; /* Для Firefox */
+    scrollbar-color: #4a5568 #2d3748; /* Для Firefox */
+}
+
+/* Стили для скроллбара в WebKit-браузерах (Chrome, Safari, Edge) */
+.styledScroll::-webkit-scrollbar {
+    width: 8px; /* Ширина скроллбара */
+}
+
+.styledScroll::-webkit-scrollbar-track {
+    background: #2d3748; /* Цвет трека (фона скроллбара) */
+    border-radius: 4px; /* Закругление углов трека */
+}
+
+.styledScroll::-webkit-scrollbar-thumb {
+    background: #4a5568; /* Цвет ползунка */
+    border-radius: 4px; /* Закругление углов ползунка */
+}
+
+.styledScroll::-webkit-scrollbar-thumb:hover {
+    background: #718096; /* Цвет ползунка при наведении */
+}

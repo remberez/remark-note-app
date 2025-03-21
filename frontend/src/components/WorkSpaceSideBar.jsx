@@ -1,7 +1,7 @@
 import { RiStickyNoteAddLine } from "react-icons/ri";
 import { FaFolderPlus } from "react-icons/fa";
 import { FaSortAmountDownAlt } from "react-icons/fa";
-import { Link, NavLink } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { useEffect, useState } from "react";
 import NoteService from "../services/noteService";
 
@@ -22,7 +22,7 @@ const SideBar = ({ setOpenNotes }) => {
     }
 
     return (
-        <aside className="flex bg-lightGray">
+        <aside className="flex bg-lightGray overflow-hidden">
             <div className="w-[70px] border-r-2 border-veryLightGray">
                 
             </div>
@@ -38,7 +38,7 @@ const SideBar = ({ setOpenNotes }) => {
                         <FaSortAmountDownAlt fill="white" size="20"/>         
                     </button>
                 </div>
-                <ul className="text-white flex flex-col gap-y-4 mt-4">
+                <ul className="text-white flex flex-col mt-4 overflow-y-scroll styledScroll h-[92%]">
                     {
                         notes.map((value) => (
                             <li>
@@ -46,6 +46,7 @@ const SideBar = ({ setOpenNotes }) => {
                                     to={`/workspace/note/${value.id}`}
                                     onClick={e => onNoteClick(e, value.title, value.id)}
                                     key={value.id}
+                                    className={({ isActive }) => isActive ? 'bg-grayBgText px-2 py-2 rounded-lg w-full block' : 'px-2 py-2 w-full block'}
                                 >
                                     { value.title }
                                 </NavLink>
