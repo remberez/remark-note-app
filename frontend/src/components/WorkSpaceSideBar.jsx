@@ -62,6 +62,10 @@ const SideBar = ({ setOpenNotes }) => {
         };
     }, []);
 
+    async function favoriteHandle(noteId) {
+        const response = await NoteService.addInFavorite(noteId);
+    }
+
     return (
         <aside className="flex bg-lightGray overflow-hidden">
             <div className="w-[70px] border-r-2 border-veryLightGray">
@@ -105,18 +109,20 @@ const SideBar = ({ setOpenNotes }) => {
                                             boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
                                         }}
                                         ref={contextMenuRef}
-                                        className="absolute z-1000 bg-white"
+                                        className="absolute z-1000 bg-white rounded-lg"
                                     >
-                                        <ul>
+                                        <ul className="flex flex-col gap-y-2 p-3">
                                             <li
-                                                style={{
-                                                    padding: "8px 16px",
-                                                    cursor: "pointer",
-                                                    color: "red",
-                                                }}
-                                                onClick={() => handleDelete(contextMenu.noteId)}
+                                                className="text-red-500"
                                             >
-                                                Удалить
+                                                <button onClick={() => handleDelete(contextMenu.noteId)}                                                >
+                                                    Удалить
+                                                </button>
+                                            </li>
+                                            <li className="text-black">
+                                                <button onClick={() => favoriteHandle(contextMenu.noteId)}>
+                                                    В избранное
+                                                </button>
                                             </li>
                                         </ul>
                                     </div>
