@@ -4,11 +4,13 @@ import { FaSortAmountDownAlt } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import NoteService from "../services/noteService";
+import { MdFavorite } from "react-icons/md";
 
 const SideBar = ({ setOpenNotes }) => {
     const [notes, setNotes] = useState([]);
     const [contextMenu, setContextMenu] = useState({ visible: false, x: 0, y: 0, noteId: null });
     const contextMenuRef = useRef(null);
+    const [isOnlyFavorites, setIsOnlyFavorites] = useState(false);
 
     const handleContextMenu = (e, noteId) => {
         e.preventDefault();
@@ -63,7 +65,20 @@ const SideBar = ({ setOpenNotes }) => {
     }, []);
 
     async function favoriteHandle(noteId) {
-        const response = await NoteService.addInFavorite(noteId);
+        await NoteService.addInFavorite(noteId);
+        setContextMenu(false);
+    }
+
+    async function favoriteSwitchHandle(e) {
+        e.preventDefault();
+        if (!isOnlyFavorites) {
+            const data = await NoteService.getFavoritesNotes();
+            console.log(data);
+            setNotes(data);
+        } else {
+            setNotes(await NoteService.fetchMyNotes());
+        }
+        setIsOnlyFavorites(!isOnlyFavorites);
     }
 
     return (
@@ -72,7 +87,7 @@ const SideBar = ({ setOpenNotes }) => {
                 
             </div>
             <div className="border-r-2 border-veryLightGray w-full pl-4 pt-4">
-                <div className="flex justify-start items-start gap-x-5">
+                <div className="flex justify-start items-center gap-x-5">
                     <button onClick={addNote}>
                         <RiStickyNoteAddLine fill="white" size="20"/>
                     </button>
@@ -82,6 +97,17 @@ const SideBar = ({ setOpenNotes }) => {
                     <button>
                         <FaSortAmountDownAlt fill="white" size="20"/>         
                     </button>
+                    <div className="relative group">
+                        <button
+                            onClick={favoriteSwitchHandle}
+                            className={isOnlyFavorites ? "bg-blue-600 p-2 rounded-lg" : "p-2"}
+                        >
+                            <MdFavorite fill="white" size="22"/>
+                        </button>
+                        <div className="absolute hidden group-hover:block bg-gray-800 text-white text-xs px-2 py-1 rounded top-[100%] bg-black">
+                            Избранные
+                        </div>
+                    </div>
                 </div>
                 <ul className="text-white flex flex-col mt-4 overflow-y-scroll styledScroll h-[92%] gap-y-2">
                     {
