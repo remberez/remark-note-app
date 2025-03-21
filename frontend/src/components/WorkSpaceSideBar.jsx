@@ -2,12 +2,23 @@ import { RiStickyNoteAddLine } from "react-icons/ri";
 import { FaFolderPlus } from "react-icons/fa";
 import { FaSortAmountDownAlt } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import NoteService from "../services/noteService";
 
 const SideBar = ({ setOpenNotes }) => {
     const [notes, setNotes] = useState([]);
-        
+    const [contextMenu, setContextMenu] = useState({ visible: false, x: 0, y: 0 });
+    const contextMenuRef = useRef(null);
+
+    const handleContextMenu = (e) => {
+        e.preventDefault();
+        setContextMenu({
+            visible: true,
+            x: e.pageX,
+            y: e.pageY,
+        });
+    };
+
     useEffect(() => {
         const fetchNotes = async () => {
             const notesData = await NoteService.fetchMyNotes();
@@ -27,6 +38,19 @@ const SideBar = ({ setOpenNotes }) => {
             setNotes([...notes, response.data])
         }
     }
+
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (contextMenuRef.current && !contextMenuRef.current.contains(e.target)) {
+                setContextMenu({ visible: false, x: 0, y: 0 });
+            }
+        };
+    
+        document.addEventListener('click', handleClickOutside);
+        return () => {
+            document.removeEventListener('click', handleClickOutside);
+        };
+    }, []);
 
     return (
         <aside className="flex bg-lightGray overflow-hidden">
@@ -52,11 +76,36 @@ const SideBar = ({ setOpenNotes }) => {
                                 <NavLink
                                     to={`/workspace/note/${value.id}`}
                                     onClick={e => onNoteClick(e, value.title, value.id)}
+                                    onContextMenu={handleContextMenu}
                                     key={value.id}
                                     className={({ isActive }) => isActive ? 'bg-grayBgText px-2 py-2 rounded-lg w-full block' : 'px-2 py-2 w-full block'}
                                 >
                                     { value.title }
                                 </NavLink>
+                                {contextMenu.visible && (
+                                    <div
+                                        style={{
+                                            top: contextMenu.y,
+                                            left: contextMenu.x,
+                                            border: "1px solid #ccc",
+                                            boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
+                                        }}
+                                        ref={contextMenuRef}
+                                        className="absolute z-1000 bg-white"
+                                    >
+                                        <ul>
+                                            <li
+                                                style={{
+                                                    padding: "8px 16px",
+                                                    cursor: "pointer",
+                                                    color: "red",
+                                                }}
+                                            >
+                                                Удалить
+                                            </li>
+                                        </ul>
+                                    </div>
+                                )}
                             </li>
                         ))
                     }
