@@ -45,6 +45,15 @@ class NoteService {
             console.error(error);
         }
     }
+
+    static async addInFavorite(noteId) {
+        try {
+            const response = await api.get(`/notes/${noteId}/add-in-favorite`);
+            return response;
+        } catch (error) {
+            console.error(error);
+        }
+    }
 }
 
 export default NoteService;
