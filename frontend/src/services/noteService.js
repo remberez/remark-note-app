@@ -18,6 +18,15 @@ class NoteService {
             console.error(error);
         }
     }
+
+    static async updateNote(noteData, noteId) {
+        try {
+            const resposne = await api.patch(`/notes/${noteId}`, noteData);
+            return resposne.status;
+        } catch (error) {
+            console.error(error);
+        }
+    }
 }
 
 export default NoteService;
