@@ -27,6 +27,15 @@ class NoteService {
             console.error(error);
         }
     }
+
+    static async createNote() {
+        try {
+            const response = await api.post("/notes/", {title: "Новая заметка", text: ""});
+            return response;
+        } catch (error) {
+            console.error(error);
+        }
+    }
 }
 
 export default NoteService;
