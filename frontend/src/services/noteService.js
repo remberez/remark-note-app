@@ -54,6 +54,19 @@ class NoteService {
             console.error(error);
         }
     }
+
+    static async getFavoritesNotes() {
+        try {
+            const response = await api.get("/notes/my", {
+                params: {
+                  in_favorites: true,
+                },
+              });
+            return response.data;
+        } catch (error) {
+            console.error(error);
+        }
+    }
 }
 
 export default NoteService;
