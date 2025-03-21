@@ -7,15 +7,16 @@ import NoteService from "../services/noteService";
 
 const SideBar = ({ setOpenNotes }) => {
     const [notes, setNotes] = useState([]);
-    const [contextMenu, setContextMenu] = useState({ visible: false, x: 0, y: 0 });
+    const [contextMenu, setContextMenu] = useState({ visible: false, x: 0, y: 0, noteId: null });
     const contextMenuRef = useRef(null);
 
-    const handleContextMenu = (e) => {
+    const handleContextMenu = (e, noteId) => {
         e.preventDefault();
         setContextMenu({
             visible: true,
             x: e.pageX,
             y: e.pageY,
+            noteId: noteId,
         });
     };
 
@@ -37,6 +38,15 @@ const SideBar = ({ setOpenNotes }) => {
         if (response.status === 200) {
             setNotes([...notes, response.data])
         }
+    }
+
+    async function handleDelete(noteId) {
+        const responseStatus = await NoteService.deleteNote(noteId);
+
+        if (responseStatus === 204) {
+            setNotes(notes.filter(value => value.id !== noteId))
+        }
+        setContextMenu(false);
     }
 
     useEffect(() => {
@@ -76,7 +86,7 @@ const SideBar = ({ setOpenNotes }) => {
                                 <NavLink
                                     to={`/workspace/note/${value.id}`}
                                     onClick={e => onNoteClick(e, value.title, value.id)}
-                                    onContextMenu={handleContextMenu}
+                                    onContextMenu={e => handleContextMenu(e, value.id)}
                                     key={value.id}
                                     className={({ isActive }) => isActive ? 'bg-grayBgText px-2 py-2 rounded-lg w-full block' : 'px-2 py-2 w-full block'}
                                 >
@@ -100,6 +110,7 @@ const SideBar = ({ setOpenNotes }) => {
                                                     cursor: "pointer",
                                                     color: "red",
                                                 }}
+                                                onClick={() => handleDelete(contextMenu.noteId)}
                                             >
                                                 Удалить
                                             </li>
