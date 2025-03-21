@@ -79,7 +79,7 @@ const SideBar = ({ setOpenNotes }) => {
                         <FaSortAmountDownAlt fill="white" size="20"/>         
                     </button>
                 </div>
-                <ul className="text-white flex flex-col mt-4 overflow-y-scroll styledScroll h-[92%]">
+                <ul className="text-white flex flex-col mt-4 overflow-y-scroll styledScroll h-[92%] gap-y-2">
                     {
                         notes.map((value) => (
                             <li>
@@ -88,7 +88,11 @@ const SideBar = ({ setOpenNotes }) => {
                                     onClick={e => onNoteClick(e, value.title, value.id)}
                                     onContextMenu={e => handleContextMenu(e, value.id)}
                                     key={value.id}
-                                    className={({ isActive }) => isActive ? 'bg-grayBgText px-2 py-2 rounded-lg w-full block' : 'px-2 py-2 w-full block'}
+                                    className={({ isActive }) => 
+                                        isActive 
+                                            ? 'bg-grayBgText px-2 py-2 rounded-lg w-full block hover:bg-gray-700' 
+                                            : 'px-2 py-2 rounded-lg w-full block hover:bg-gray-700'
+                                        }
                                 >
                                     { value.title }
                                 </NavLink>
