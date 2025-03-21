@@ -47,7 +47,7 @@ class NoteService:
 
     async def add_to_favorites(self, note_id: int, user_id: int) -> None:
         await self.get(note_id=note_id, user_id=user_id)
-        await self._repository.update(note_id=note_id, is_favorite=True)
+        await self._repository.update(note_id=note_id, in_favorites=True)
 
     async def remove_from_favorites(self, note_id: int, user_id: int) -> None:
         await self.get(note_id=note_id, user_id=user_id)
