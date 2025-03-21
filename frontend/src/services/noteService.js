@@ -36,6 +36,15 @@ class NoteService {
             console.error(error);
         }
     }
+
+    static async deleteNote(noteId) {
+        try {
+            const response = await api.delete(`/notes/${noteId}/`);
+            return response.status;
+        } catch (error) {
+            console.error(error);
+        }
+    }
 }
 
 export default NoteService;
