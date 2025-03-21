@@ -21,6 +21,13 @@ const SideBar = ({ setOpenNotes }) => {
         setOpenNotes(id, title);
     }
 
+    async function addNote() {
+        const response = await NoteService.createNote();
+        if (response.status === 200) {
+            setNotes([...notes, response.data])
+        }
+    }
+
     return (
         <aside className="flex bg-lightGray overflow-hidden">
             <div className="w-[70px] border-r-2 border-veryLightGray">
@@ -28,7 +35,7 @@ const SideBar = ({ setOpenNotes }) => {
             </div>
             <div className="border-r-2 border-veryLightGray w-full pl-4 pt-4">
                 <div className="flex justify-start items-start gap-x-5">
-                    <button>
+                    <button onClick={addNote}>
                         <RiStickyNoteAddLine fill="white" size="20"/>
                     </button>
                     <button>
