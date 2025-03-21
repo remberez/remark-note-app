@@ -10,9 +10,19 @@ const NoteTextField = () => {
         const fetchNote = async (noteId) => {
             const response = await NoteService.fetchDetailNote(noteId);
             setTextData(response);
+            setIsInitialized(true);
         }
         fetchNote(noteId);
     }, [noteId])
+
+    useEffect(() => {
+        const interval = setInterval(async () => {
+                await NoteService.updateNote(textData, noteId);
+        }, 350);
+
+        return () => clearInterval(interval);
+    }, [textData]);
+
     return (
         <section className="bg-black overflow-hidden">
             <input
