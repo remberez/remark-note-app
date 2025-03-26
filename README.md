@@ -39,7 +39,7 @@ POSTGRES_PASSWORD: password
 ```bash
 docker-compose up
 ```
-2.После запуска сервера откройте в браузере:
+2. После запуска сервера откройте в браузере:
 - **Swagger UI**: http://127.0.0.1:8000/docs
 - **ReDoc**: http://127.0.0.1:8000/redoc
 - **Frontend**: http://localhost
