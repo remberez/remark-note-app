@@ -1,7 +1,7 @@
 
-# Приложение для заметок
+# Приложение для заметок Remark
 
-Этот проект представляет собой RESTful API, разработанный с использованием FastAPI. Он предоставляет функциональность для управления заметками (создание, чтение, обновление, удаление).
+Этот проект представляет собой RESTful API + Frontend, разработанный с использованием FastAPI + React. Он предоставляет функциональность для управления заметками (создание, чтение, обновление, удаление).
 
 ---
 
@@ -20,43 +20,29 @@
 git clone https://github.com/remberez/NoteApp
 cd NoteApp
 ```
-2. Установите poetry (если ещё не установлен):
-```bash
-pip install poetry
-```
-3. Установите зависимости проекта:
-```bash
-poetry install
-```
-4. Активируйте виртуальное окружение:
-```bash
-poetry shell
-```
-5. Настройте переменные окружения:
+2. Установите Docker (если ещё не установлен):
+3. Настройте переменные окружения:
 Создайте файл .env в корне проекта и добавьте необходимые переменные. Например:
 ```env
-APP__DB__URL=postgresql+asyncpg://user:password@host:port/db_name
+APP__DB__URL=postgresql+asyncpg://user:password@pg/db_name
 APP__AUTH__RESET_PASSWORD_TOKEN_SECRET=SECRET
 APP__AUTH__VERIFICATION_TOKEN_SECRET=SECRET
 ```
 6. Добавьте необходимые переменные в docker-compose.yml: Например:
 ```yml
-POSTGRES_DB: testDB
+POSTGRES_DB: db_name
 POSTGRES_USER: user
 POSTGRES_PASSWORD: password
 ```
 ## **Запуск проекта**
-1. Запустите сервер разработки:
+1. Запустите сервер docker-compose:
 ```bash
-poetry run main.py
-```
-2. Запустите docker-compose.yml:
-```bash
-docker-compose up -d
+docker-compose up
 ```
 2.После запуска сервера откройте в браузере:
 - **Swagger UI**: http://127.0.0.1:8000/docs
 - **ReDoc**: http://127.0.0.1:8000/redoc
+- **Frontend**: http://localhost
 
 ## **Технологии**
 - FastAPI — фреймворк для создания API.
@@ -64,6 +50,9 @@ docker-compose up -d
 - PostgreSQL — база данных.
 - Docker — контейнеризация приложения.
 - Poetry — управление зависимостями.
+- React - фронтенд часть приложения.
+- Vite - для настройки среды разработки.
+- Nginx - обратынй прокси-сервер и веб-сервер для статических файлов.
 
 ## **Лицензия**
 Этот проект распространяется под лицензией MIT. Подробнее см. в файле LICENSE.
