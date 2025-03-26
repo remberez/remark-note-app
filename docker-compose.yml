@@ -15,5 +15,23 @@ services:
       interval: 5s
       timeout: 3s
       retries: 3
+
+  fastapi:
+    build: ./app
+    ports:
+      - "8000:8000"
+    depends_on:
+      pg:
+        condition: service_healthy
+    volumes:
+      - ./app:/app
+      - /app/venv
+
+  react:
+    build: ./frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - fastapi
 volumes:
   pgdata:
